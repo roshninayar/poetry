@@ -35,6 +35,8 @@ fridge.addEventListener('dragover', (e) => {
     e.preventDefault(); 
 });
 
+const ROW_HEIGHT = 30; // Define the height of each straight row (in pixels)
+
 // --- 5. DROP EVENT (on the fridge area) ---
 fridge.addEventListener('drop', (e) => {
     e.preventDefault();
@@ -45,12 +47,27 @@ fridge.addEventListener('drop', (e) => {
         
         fridge.appendChild(draggedElement);
         
-        // Remove old positioning styles (NEW)
-        draggedElement.style.position = '';
-        draggedElement.style.left = '';
-        draggedElement.style.top = '';
+        // 1. Set the position
+        draggedElement.style.position = 'absolute';
         
-        // Random Rotation is still applied using transform! (Keep this line from our previous feature)
+        const rect = fridge.getBoundingClientRect();
+        
+        // Calculate raw drop coordinates relative to the fridge
+        const rawLeft = e.clientX - rect.left - (draggedElement.offsetWidth / 2);
+        const rawTop = e.clientY - rect.top - (draggedElement.offsetHeight / 2);
+
+        // 2. Snap to Row Logic (NEW CRITICAL PART)
+        // Calculate the nearest multiple of ROW_HEIGHT
+        const snappedTop = Math.round(rawTop / ROW_HEIGHT) * ROW_HEIGHT;
+        
+        // Ensure the word stays within the bounds
+        const finalTop = Math.max(0, snappedTop); // Prevent placing above the top edge
+        
+        // 3. Apply Positioning
+        draggedElement.style.left = rawLeft + 'px';
+        draggedElement.style.top = finalTop + 'px'; // Use the snapped vertical position
+
+        // Rotation (from the previous feature)
         const randomAngle = Math.floor(Math.random() * 11) - 5; 
         draggedElement.style.transform = `rotate(${randomAngle}deg)`;
         
