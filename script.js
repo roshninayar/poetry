@@ -1,11 +1,15 @@
 const fridge = document.getElementById('refrigerator-area');
-const wordPool = document.getElementById('word-pool');
-const ROW_HEIGHT = 30; // Height for snapping tiles to a straight line
+const poolBottom = document.getElementById('word-pool-bottom');
+const poolLeft = document.getElementById('word-pool-left');
+const poolRight = document.getElementById('word-pool-right');
+const allPools = [poolBottom, poolLeft, poolRight]; // Array of all pool containers
+const refreshButton = document.getElementById('refresh-button');
+const ROW_HEIGHT = 30; 
 let draggedElement = null;
 
-// Function to convert CSV text into an array of words
+// Function to convert CSV text into an array of words (ROBUST PARSER FIX)
 function parseWords(csvText) {
-    // 1. Use a robust regex to split lines, handling different line endings (\r\n, \r, or \n)
+    // 1. Use regex to split lines, handling all line endings (\r\n, \r, \n)
     const lines = csvText.split(/[\r\n]+/).filter(line => line.trim() !== '');
     
     // The first line is the header row; subsequent lines are data
@@ -14,16 +18,12 @@ function parseWords(csvText) {
     let allWords = [];
 
     dataLines.forEach(line => {
-        // Split the line into columns (cells)
-        // Note: This simple split works well for CSVs without commas inside the data
         const cells = line.split(','); 
         
-        // Iterate through every cell (column) in the row
         cells.forEach(cell => {
             let word = cell.trim();
 
-            // 2. CRITICAL FIX: Remove potential surrounding quotation marks 
-            // that are often added by spreadsheet programs during export.
+            // 2. CRITICAL FIX: Remove potential surrounding quotation marks
             if (word.startsWith('"') && word.endsWith('"')) {
                 word = word.substring(1, word.length - 1);
             }
@@ -35,17 +35,12 @@ function parseWords(csvText) {
         });
     });
     
-    // Optional: Log the final word count to the browser console to confirm
-    console.log(`Successfully loaded ${allWords.length} words from CSV.`);
-    
     return allWords;
 }
-// (Keep all other functions below this one unchanged)
 
 // Function to fetch the CSV file and start the page setup
 async function loadWordsAndCreateTiles() {
     try {
-        // CRITICAL: Fetching the file by its exact name
         const response = await fetch('Borderline Poetry - Individual words.csv'); 
         
         if (!response.ok) {
@@ -53,32 +48,70 @@ async function loadWordsAndCreateTiles() {
         }
         
         const csvText = await response.text();
-        
-        // Parse the CSV text into our clean word array
         const finalWords = parseWords(csvText);
         
-        // Create the tiles using the words from the CSV
         createTiles(finalWords);
 
     } catch (error) {
         console.error("Could not load the word list:", error);
-        wordPool.innerHTML = 'Error loading word list. Check console for details.';
+        // Note: If the pools are null due to HTML not loading, this line will crash.
+        // We assume the HTML loads correctly first.
+        poolBottom.innerHTML = 'Error loading word list. Check console for details.';
     }
 }
 
-// Function to create the HTML tiles and populate the word pool
+// Function to create the HTML tiles and distribute them across pools
 function createTiles(wordsArray) {
-    // Sort words randomly before creating them
-    wordsArray.sort(() => Math.random() - 0.5).forEach(word => {
+    wordsArray.sort(() => Math.random() - 0.5).forEach((word, index) => {
         const tile = document.createElement('div');
         tile.classList.add('word-tile');
         tile.textContent = word;
         
         tile.setAttribute('draggable', true);
         
-        wordPool.appendChild(tile);
+        // Distribute words across the three pools for the surrounding effect
+        allPools[index % allPools.length].appendChild(tile);
     });
 }
+
+
+// --- 8. REFRESH BUTTON LOGIC (Updated for 3 Pools) ---
+function clearAndShuffle() {
+    const allTiles = document.querySelectorAll('.word-tile');
+    
+    // 1. Move all tiles back to the main (bottom) pool and clear styling
+    allTiles.forEach(tile => {
+        poolBottom.appendChild(tile); // Move the tile to the bottom pool
+        
+        // Reset all inline styling (position, rotation)
+        tile.style.position = '';
+        tile.style.left = '';
+        tile.style.top = '';
+        tile.style.transform = '';
+    });
+    
+    // 2. Clear the poem prompt if it was removed
+    if (!fridge.querySelector('.poem-prompt')) {
+        const prompt = document.createElement('p');
+        prompt.classList.add('poem-prompt');
+        prompt.textContent = "Drag words here to begin your poem...";
+        fridge.appendChild(prompt);
+    }
+    
+    // 3. Shuffle the words in the word pool and redistribute
+    const shuffledWords = Array.from(allTiles).sort(() => Math.random() - 0.5);
+    
+    shuffledWords.forEach((tile, index) => {
+        // Redistribute across the three pools
+        allPools[index % allPools.length].appendChild(tile);
+    });
+}
+
+// Add event listener to the refresh button
+if (refreshButton) {
+    refreshButton.addEventListener('click', clearAndShuffle);
+}
+
 
 // --- DRAGSTART EVENT (on the word tile) ---
 document.addEventListener('dragstart', (e) => {
@@ -125,26 +158,30 @@ fridge.addEventListener('drop', (e) => {
     }
 });
 
-// --- DRAG OVER EVENT (on the word pool - for returning words) ---
-wordPool.addEventListener('dragover', (e) => {
-    e.preventDefault(); 
-});
+// --- DROP EVENT (on the word pools - to return a word) ---
+// Loop through all pool containers to attach listeners
+allPools.forEach(pool => {
+    if (pool) { // Check if the pool element exists (from HTML)
+        pool.addEventListener('dragover', (e) => {
+            e.preventDefault(); 
+        });
 
-// --- DROP EVENT (on the word pool - to return a word) ---
-wordPool.addEventListener('drop', (e) => {
-    e.preventDefault();
-    
-    if (draggedElement && draggedElement.classList.contains('word-tile')) {
-        // Append the word back to the word pool
-        wordPool.appendChild(draggedElement);
-        
-        // Clear all inline styling (position and rotation)
-        draggedElement.style.position = '';
-        draggedElement.style.left = '';
-        draggedElement.style.top = '';
-        draggedElement.style.transform = '';
+        pool.addEventListener('drop', (e) => {
+            e.preventDefault();
+            
+            if (draggedElement && draggedElement.classList.contains('word-tile')) {
+                // Return the word to the specific pool it was dropped on
+                pool.appendChild(draggedElement); 
+                
+                // Clear all inline styling (position and rotation)
+                draggedElement.style.position = '';
+                draggedElement.style.left = '';
+                draggedElement.style.top = '';
+                draggedElement.style.transform = '';
 
-        draggedElement = null;
+                draggedElement = null;
+            }
+        });
     }
 });
 
