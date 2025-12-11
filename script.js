@@ -1,1 +1,44 @@
+body {
+    font-family: sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
 
+#refrigerator-area {
+    position: relative; 
+    width: 90%;
+    max-width: 800px;
+    height: 400px;
+    margin: 20px auto;
+    border: 10px solid #ccc;
+    background-color: #e0f0ff; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    overflow: hidden; 
+}
+
+.poem-prompt {
+    color: #999;
+    padding-top: 150px;
+    font-style: italic;
+}
+
+.word-tile {
+    display: inline-block; 
+    padding: 5px 10px;
+    margin: 5px;
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 3px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+    cursor: grab;
+    z-index: 10; 
+}
+
+#word-pool {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    border-top: 2px dashed #999;
+    padding-top: 15px;
+    text-align: left;
+}
