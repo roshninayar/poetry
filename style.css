@@ -57,10 +57,10 @@ body {
     /* Retaining large dimensions (280px wide, 800px tall) */
     width: 280px; 
     padding: 10px;
-    height: 800px; 
+    /*height: 800px;*/ 
     
     margin-top: 50px;
-    overflow-y: auto; /* Allows scrolling */
+    /*overflow-y: auto; /* Allows scrolling */*/
     border-left: 1px dashed #ccc;
     border-right: 1px dashed #ccc;
 }
@@ -73,8 +73,8 @@ body {
     border-top: 2px dashed #999;
     padding-top: 15px;
     text-align: left;
-    height: 300px; /* Give it a fixed height */
-    overflow-y: auto;
+    /*height: 300px; /* Give it a fixed height */*/
+    /*overflow-y: auto;*/
 }
 
 /* Update: Style the button */
