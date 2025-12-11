@@ -5,7 +5,8 @@ let draggedElement = null;
 
 // Function to convert CSV text into an array of words
 function parseWords(csvText) {
-    const lines = csvText.split('\n').filter(line => line.trim() !== '');
+    // 1. Use a robust regex to split lines, handling different line endings (\r\n, \r, or \n)
+    const lines = csvText.split(/[\r\n]+/).filter(line => line.trim() !== '');
     
     // The first line is the header row; subsequent lines are data
     const dataLines = lines.slice(1);
@@ -14,11 +15,19 @@ function parseWords(csvText) {
 
     dataLines.forEach(line => {
         // Split the line into columns (cells)
+        // Note: This simple split works well for CSVs without commas inside the data
         const cells = line.split(','); 
         
         // Iterate through every cell (column) in the row
         cells.forEach(cell => {
-            const word = cell.trim();
+            let word = cell.trim();
+
+            // 2. CRITICAL FIX: Remove potential surrounding quotation marks 
+            // that are often added by spreadsheet programs during export.
+            if (word.startsWith('"') && word.endsWith('"')) {
+                word = word.substring(1, word.length - 1);
+            }
+            
             // Only add the word if it is not an empty string
             if (word.length > 0) {
                 allWords.push(word);
@@ -26,8 +35,12 @@ function parseWords(csvText) {
         });
     });
     
+    // Optional: Log the final word count to the browser console to confirm
+    console.log(`Successfully loaded ${allWords.length} words from CSV.`);
+    
     return allWords;
 }
+// (Keep all other functions below this one unchanged)
 
 // Function to fetch the CSV file and start the page setup
 async function loadWordsAndCreateTiles() {
