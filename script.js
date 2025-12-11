@@ -5,17 +5,28 @@ let draggedElement = null;
 
 // Function to convert CSV text into an array of words
 function parseWords(csvText) {
-    // 1. Split the text into individual lines
-    const lines = csvText.split('\n');
+    const lines = csvText.split('\n').filter(line => line.trim() !== '');
     
-    // 2. Remove the first line (the header row) and any empty lines
-    // Also, ensures we only process non-empty lines
-    const dataLines = lines.slice(1).filter(line => line.trim() !== '');
+    // The first line is the header row; subsequent lines are data
+    const dataLines = lines.slice(1);
     
-    // 3. Extract the word from each line (assuming single column)
-    const words = dataLines.map(line => line.split(',')[0].trim());
+    let allWords = [];
+
+    dataLines.forEach(line => {
+        // Split the line into columns (cells)
+        const cells = line.split(','); 
+        
+        // Iterate through every cell (column) in the row
+        cells.forEach(cell => {
+            const word = cell.trim();
+            // Only add the word if it is not an empty string
+            if (word.length > 0) {
+                allWords.push(word);
+            }
+        });
+    });
     
-    return words;
+    return allWords;
 }
 
 // Function to fetch the CSV file and start the page setup
