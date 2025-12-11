@@ -45,16 +45,39 @@ fridge.addEventListener('drop', (e) => {
         
         fridge.appendChild(draggedElement);
         
-        // Setting position for the "sticking" effect
-        draggedElement.style.position = 'absolute';
+        // Remove old positioning styles (NEW)
+        draggedElement.style.position = '';
+        draggedElement.style.left = '';
+        draggedElement.style.top = '';
         
-        const rect = fridge.getBoundingClientRect();
-        
-        // Calculate position relative to the fridge container
-        draggedElement.style.left = (e.clientX - rect.left - (draggedElement.offsetWidth / 2)) + 'px';
-        draggedElement.style.top = (e.clientY - rect.top - (draggedElement.offsetHeight / 2)) + 'px';
+        // Random Rotation is still applied using transform! (Keep this line from our previous feature)
+        const randomAngle = Math.floor(Math.random() * 11) - 5; 
+        draggedElement.style.transform = `rotate(${randomAngle}deg)`;
         
         draggedElement = null; 
+    }
+});
+
+// --- 6. DRAG OVER EVENT (on the word pool) ---
+wordPool.addEventListener('dragover', (e) => {
+    e.preventDefault(); 
+});
+
+// --- 7. DROP EVENT (on the word pool) ---
+wordPool.addEventListener('drop', (e) => {
+    e.preventDefault();
+    
+    if (draggedElement && draggedElement.classList.contains('word-tile')) {
+        // Append the word back to the word pool
+        wordPool.appendChild(draggedElement);
+        
+        // Clear all inline styling (position and rotation) (NEW)
+        draggedElement.style.position = '';
+        draggedElement.style.left = '';
+        draggedElement.style.top = '';
+        draggedElement.style.transform = '';
+
+        draggedElement = null;
     }
 });
 
