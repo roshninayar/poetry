@@ -30,8 +30,8 @@ deep,eat,none,in,un,re,
 time,ate,little,are,un,re,
 home,give,has,are,by,dis,
 house,go,have,be,by,dis,
-roof,get,truth,be,a,,
-floor,hate,lie,was,,,
+roof,get,truth,be,a,some,
+floor,hate,lie,was,time,,
 eye,need,lay,was,,,
 face,mad,between,were,,,
 sad,kind,tran,were,,,
@@ -82,5 +82,6 @@ custom,,,,,,
 ,,at,,,,
 ,,at,,,,
 ,,at,,,,
+
 
 
