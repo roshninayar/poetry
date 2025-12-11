@@ -1,62 +1,44 @@
-const fridge = document.getElementById('refrigerator-area');
-const wordPool = document.getElementById('word-pool');
-
-// --- 1. WORD DATA ---
-const initialWords = [
-    "the", "a", "is", "was", "will", "i", "you", "we", "he", "she", "it",
-    "dream", "ocean", "cat", "dog", "moon", "star", "silent",
-    "happy", "sing", "fly", "imagine", "beautiful", "sky", "always",
-    "sometimes", "never", "tomorrow", "yesterday", "love", "hate", "machine"
-];
-
-let draggedElement = null;
-
-// --- 2. INITIALIZATION ---
-function createTiles() {
-    initialWords.sort(() => Math.random() - 0.5).forEach(word => {
-        const tile = document.createElement('div');
-        tile.classList.add('word-tile');
-        tile.textContent = word;
-        tile.setAttribute('draggable', true);
-        wordPool.appendChild(tile);
-    });
+body {
+    font-family: sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
 }
 
-// --- 3. DRAG START EVENT (on the word tile) ---
-document.addEventListener('dragstart', (e) => {
-    if (e.target.classList.contains('word-tile')) {
-        draggedElement = e.target;
-        e.dataTransfer.setData('text/plain', e.target.textContent);
-    }
-});
+#refrigerator-area {
+    position: relative; 
+    width: 90%;
+    max-width: 800px;
+    height: 400px;
+    margin: 20px auto;
+    border: 10px solid #ccc;
+    background-color: #e0f0ff; 
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    overflow: hidden; 
+}
 
-// --- 4. DRAG OVER EVENT (on the fridge area) ---
-fridge.addEventListener('dragover', (e) => {
-    e.preventDefault(); 
-});
+.poem-prompt {
+    color: #999;
+    padding-top: 150px;
+    font-style: italic;
+}
 
-// --- 5. DROP EVENT (on the fridge area) ---
-fridge.addEventListener('drop', (e) => {
-    e.preventDefault();
-    
-    if (draggedElement && draggedElement.classList.contains('word-tile')) {
-        const prompt = fridge.querySelector('.poem-prompt');
-        if (prompt) { prompt.remove(); }
-        
-        fridge.appendChild(draggedElement);
-        
-        // Setting position for the "sticking" effect
-        draggedElement.style.position = 'absolute';
-        
-        const rect = fridge.getBoundingClientRect();
-        
-        // Calculate position relative to the fridge container
-        draggedElement.style.left = (e.clientX - rect.left - (draggedElement.offsetWidth / 2)) + 'px';
-        draggedElement.style.top = (e.clientY - rect.top - (draggedElement.offsetHeight / 2)) + 'px';
-        
-        draggedElement = null; 
-    }
-});
+.word-tile {
+    display: inline-block; 
+    padding: 5px 10px;
+    margin: 5px;
+    background-color: #fff;
+    border: 1px solid #333;
+    border-radius: 3px;
+    box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
+    cursor: grab;
+    z-index: 10; 
+}
 
-// Run the initialization function
-createTiles();
+#word-pool {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    border-top: 2px dashed #999;
+    padding-top: 15px;
+    text-align: left;
+}
