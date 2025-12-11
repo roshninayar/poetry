@@ -56,21 +56,27 @@ fridge.addEventListener('drop', (e) => {
         const rawLeft = e.clientX - rect.left - (draggedElement.offsetWidth / 2);
         const rawTop = e.clientY - rect.top - (draggedElement.offsetHeight / 2);
 
-        // 2. Snap to Row Logic (NEW CRITICAL PART)
+        // 2. Snap to Row Logic
         // Calculate the nearest multiple of ROW_HEIGHT
         const snappedTop = Math.round(rawTop / ROW_HEIGHT) * ROW_HEIGHT;
         
         // Ensure the word stays within the bounds
-        const finalTop = Math.max(0, snappedTop); // Prevent placing above the top edge
+        const finalTop = Math.max(0, snappedTop); 
         
         // 3. Apply Positioning
         draggedElement.style.left = rawLeft + 'px';
-        draggedElement.style.top = finalTop + 'px'; // Use the snapped vertical position
+        draggedElement.style.top = finalTop + 'px'; 
 
-        // Rotation (from the previous feature)
-        const randomAngle = Math.floor(Math.random() * 11) - 5; 
-        draggedElement.style.transform = `rotate(${randomAngle}deg)`;
+        // ----------------------------------------------------
+        // REMOVED CODE: 
+        // const randomAngle = Math.floor(Math.random() * 11) - 5; 
+        // draggedElement.style.transform = `rotate(${randomAngle}deg)`;
+        // ----------------------------------------------------
         
+        // IMPORTANT: Ensure the word is straight when returning from the pool.
+        // If the word was previously rotated, we need to explicitly set transform to none.
+        draggedElement.style.transform = 'none'; 
+
         draggedElement = null; 
     }
 });
