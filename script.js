@@ -1,28 +1,62 @@
 const fridge = document.getElementById('refrigerator-area');
 const wordPool = document.getElementById('word-pool');
-
-// --- 1. WORD DATA ---
-const initialWords = [
-    "the", "a", "is", "was", "will", "i", "you", "we", "he", "she", "it",
-    "dream", "ocean", "cat", "dog", "moon", "star", "silent",
-    "happy", "sing", "fly", "imagine", "beautiful", "sky", "always",
-    "sometimes", "never", "tomorrow", "yesterday", "love", "hate", "machine"
-];
-
+const ROW_HEIGHT = 30; // Height for snapping tiles to a straight line
 let draggedElement = null;
 
-// --- 2. INITIALIZATION ---
-function createTiles() {
-    initialWords.sort(() => Math.random() - 0.5).forEach(word => {
+// Function to convert CSV text into an array of words
+function parseWords(csvText) {
+    // 1. Split the text into individual lines
+    const lines = csvText.split('\n');
+    
+    // 2. Remove the first line (the header row) and any empty lines
+    // Also, ensures we only process non-empty lines
+    const dataLines = lines.slice(1).filter(line => line.trim() !== '');
+    
+    // 3. Extract the word from each line (assuming single column)
+    const words = dataLines.map(line => line.split(',')[0].trim());
+    
+    return words;
+}
+
+// Function to fetch the CSV file and start the page setup
+async function loadWordsAndCreateTiles() {
+    try {
+        // CRITICAL: Fetching the file by its exact name
+        const response = await fetch('Borderline Poetry - Individual words.csv'); 
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status} - File not found.`);
+        }
+        
+        const csvText = await response.text();
+        
+        // Parse the CSV text into our clean word array
+        const finalWords = parseWords(csvText);
+        
+        // Create the tiles using the words from the CSV
+        createTiles(finalWords);
+
+    } catch (error) {
+        console.error("Could not load the word list:", error);
+        wordPool.innerHTML = 'Error loading word list. Check console for details.';
+    }
+}
+
+// Function to create the HTML tiles and populate the word pool
+function createTiles(wordsArray) {
+    // Sort words randomly before creating them
+    wordsArray.sort(() => Math.random() - 0.5).forEach(word => {
         const tile = document.createElement('div');
         tile.classList.add('word-tile');
         tile.textContent = word;
+        
         tile.setAttribute('draggable', true);
+        
         wordPool.appendChild(tile);
     });
 }
 
-// --- 3. DRAG START EVENT (on the word tile) ---
+// --- DRAGSTART EVENT (on the word tile) ---
 document.addEventListener('dragstart', (e) => {
     if (e.target.classList.contains('word-tile')) {
         draggedElement = e.target;
@@ -30,14 +64,12 @@ document.addEventListener('dragstart', (e) => {
     }
 });
 
-// --- 4. DRAG OVER EVENT (on the fridge area) ---
+// --- DRAG OVER EVENT (on the fridge area) ---
 fridge.addEventListener('dragover', (e) => {
     e.preventDefault(); 
 });
 
-const ROW_HEIGHT = 30; // Define the height of each straight row (in pixels)
-
-// --- 5. DROP EVENT (on the fridge area) ---
+// --- DROP EVENT (on the fridge area - Snap-to-Row Logic) ---
 fridge.addEventListener('drop', (e) => {
     e.preventDefault();
     
@@ -57,36 +89,24 @@ fridge.addEventListener('drop', (e) => {
         const rawTop = e.clientY - rect.top - (draggedElement.offsetHeight / 2);
 
         // 2. Snap to Row Logic
-        // Calculate the nearest multiple of ROW_HEIGHT
         const snappedTop = Math.round(rawTop / ROW_HEIGHT) * ROW_HEIGHT;
-        
-        // Ensure the word stays within the bounds
         const finalTop = Math.max(0, snappedTop); 
         
-        // 3. Apply Positioning
+        // 3. Apply Positioning (horizontal freedom, vertical snap)
         draggedElement.style.left = rawLeft + 'px';
         draggedElement.style.top = finalTop + 'px'; 
-
-        // ----------------------------------------------------
-        // REMOVED CODE: 
-        // const randomAngle = Math.floor(Math.random() * 11) - 5; 
-        // draggedElement.style.transform = `rotate(${randomAngle}deg)`;
-        // ----------------------------------------------------
+        draggedElement.style.transform = 'none'; // Ensure no rotation
         
-        // IMPORTANT: Ensure the word is straight when returning from the pool.
-        // If the word was previously rotated, we need to explicitly set transform to none.
-        draggedElement.style.transform = 'none'; 
-
         draggedElement = null; 
     }
 });
 
-// --- 6. DRAG OVER EVENT (on the word pool) ---
+// --- DRAG OVER EVENT (on the word pool - for returning words) ---
 wordPool.addEventListener('dragover', (e) => {
     e.preventDefault(); 
 });
 
-// --- 7. DROP EVENT (on the word pool) ---
+// --- DROP EVENT (on the word pool - to return a word) ---
 wordPool.addEventListener('drop', (e) => {
     e.preventDefault();
     
@@ -94,7 +114,7 @@ wordPool.addEventListener('drop', (e) => {
         // Append the word back to the word pool
         wordPool.appendChild(draggedElement);
         
-        // Clear all inline styling (position and rotation) (NEW)
+        // Clear all inline styling (position and rotation)
         draggedElement.style.position = '';
         draggedElement.style.left = '';
         draggedElement.style.top = '';
@@ -104,5 +124,8 @@ wordPool.addEventListener('drop', (e) => {
     }
 });
 
-// Run the initialization function
-createTiles();
+
+// ----------------------------------------------------
+// START APPLICATION
+// ----------------------------------------------------
+loadWordsAndCreateTiles();
