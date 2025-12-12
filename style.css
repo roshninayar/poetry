@@ -93,3 +93,10 @@ body {
 #refresh-button:hover {
     background-color: #e4fcd9;
 }
+
+#main-logo {
+    display: block; 
+    max-width: 100%; 
+    height: auto; 
+    margin: 0px auto 10px; 
+}
