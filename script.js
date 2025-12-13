@@ -1,16 +1,65 @@
 const fridge = document.getElementById('refrigerator-area');
-const poolBottom = document.getElementById('word-pool-bottom');
-const poolLeft = document.getElementById('word-pool-left');
-const poolRight = document.getElementById('word-pool-right');
-// NEW SMALL POOLS:
-const poolLogoLeft = document.getElementById('word-pool-logo-left');
-const poolLogoRight = document.getElementById('word-pool-logo-right');
+// All words go into the single full-page pool
+const fullPagePool = document.getElementById('full-page-pool'); 
 
-// Collect ALL five word pools for word distribution
-const allPools = [poolBottom, poolLeft, poolRight, poolLogoLeft, poolLogoRight].filter(pool => pool !== null); 
+// The only pool is the fullPagePool
+const allPools = [fullPagePool].filter(pool => pool !== null); 
 const refreshButton = document.getElementById('refresh-button');
 const ROW_HEIGHT = 35; 
 let draggedElement = null;
+
+// Function to convert CSV text into an array of words (ROBUST PARSER FIX)
+// ... (The rest of your JS code continues here, largely unchanged)
+
+// The tile creation function is now much simpler:
+function createTiles(wordsArray) {
+    if (fullPagePool) {
+        wordsArray.sort(() => Math.random() - 0.5).forEach((word) => {
+            const tile = document.createElement('div');
+            tile.classList.add('word-tile');
+            tile.textContent = word;
+            tile.setAttribute('draggable', true);
+            
+            // All words go into the single pool
+            fullPagePool.appendChild(tile); 
+        });
+    } else {
+        console.error("The full-page word pool container was not found.");
+    }
+}
+
+
+// --- REFRESH BUTTON LOGIC ---
+function clearAndShuffle() {
+    const allTiles = document.querySelectorAll('.word-tile');
+    
+    allTiles.forEach(tile => {
+        if (fullPagePool) {
+            fullPagePool.appendChild(tile);
+        }
+        
+        tile.style.position = '';
+        tile.style.left = '';
+        tile.style.top = '';
+        tile.style.transform = '';
+    });
+    
+    if (fridge && !fridge.querySelector('.poem-prompt')) {
+        const prompt = document.createElement('p');
+        prompt.classList.add('poem-prompt');
+        prompt.textContent = "Drag words here to begin your poem...";
+        fridge.appendChild(prompt);
+    }
+    
+    if (fullPagePool) {
+        // Re-shuffle words within the single pool
+        const shuffledWords = Array.from(allTiles).sort(() => Math.random() - 0.5);
+        
+        shuffledWords.forEach((tile) => {
+            fullPagePool.appendChild(tile);
+        });
+    }
+}
 
 // Function to convert CSV text into an array of words (ROBUST PARSER FIX)
 function parseWords(csvText) {
