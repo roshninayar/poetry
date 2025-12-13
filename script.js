@@ -221,20 +221,19 @@ if (fridge) {
     });
 }
 
-
-// --- DROP EVENT (on the word pools - to return a word) ---
-allPools.forEach(pool => {
-    // This pool is guaranteed to exist because of the filter at the top.
-    pool.addEventListener('dragover', (e) => {
+// --- DROP EVENT (on the word pool - to return a word) ---
+if (fullPagePool) {
+    fullPagePool.addEventListener('dragover', (e) => {
         e.preventDefault(); 
     });
 
-    pool.addEventListener('drop', (e) => {
+    fullPagePool.addEventListener('drop', (e) => {
         e.preventDefault();
         
         if (draggedElement && draggedElement.classList.contains('word-tile')) {
-            pool.appendChild(draggedElement); 
+            fullPagePool.appendChild(draggedElement); 
             
+            // CRITICAL: Remove all positioning styles to return it to the normal flow
             draggedElement.style.position = '';
             draggedElement.style.left = '';
             draggedElement.style.top = '';
@@ -243,8 +242,7 @@ allPools.forEach(pool => {
             draggedElement = null;
         }
     });
-});
-
+}
 
 // ----------------------------------------------------
 // START APPLICATION
