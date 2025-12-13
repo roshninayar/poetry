@@ -4,18 +4,41 @@ body {
     background-color: #ffffff;
 }
 
+/* --- POETRY LAYOUT (Outer Container) --- */
+#poetry-layout {
+    width: 95%;
+    max-width: 1400px; 
+    margin: 20px auto;
+}
+
+/* --- NEW TOP LAYOUT (Logo and its side pools) --- */
+#top-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Vertically centers the logo with the top pools */
+    margin-bottom: 20px; /* Space below the logo/top-pools and above the fridge */
+}
+
+/* --- CENTER COLUMN (Fridge, Button, Bottom Pool) --- */
+#center-column {
+    /* Uses the remaining space below the top layout */
+    width: 100%; 
+    display: flex; /* Makes the fridge and bottom pool stack vertically */
+    flex-direction: column;
+    align-items: center; /* Centers the fridge/button/pool */
+}
+
+/* --- REFRIGERATOR AREA --- */
 #refrigerator-area {
-    /* Reverting to standard relative container for absolute positioning */
     position: relative; 
-    
     width: 90%;
     max-width: 800px;
     height: 400px;
-    margin: 20px auto;
+    margin: 0 auto; /* Removed top/bottom margin */
     border: 3px solid #406dcf;
     background-color: #fff; 
     box-shadow: 0 0 0px rgba(0,0,0,0.1);
-    overflow: hidden; /* Keep words inside */
+    overflow: hidden;
 }
 
 .poem-prompt {
@@ -24,62 +47,46 @@ body {
     font-style: italic;
 }
 
+/* --- WORD TILES --- */
 .word-tile {
     display: inline-block; 
     padding: 5px 10px;
     background-color: #fff;
     border: 1px solid #9E9E9E;
     border-radius: 5px;
-    /*box-shadow: 2px 2px 3px rgba(0,0,0,0.2);*/
     cursor: grab;
     z-index: 10;
-    
-    /* ADJUSTED: Margin set to 2px for maximum density in the pools */
     margin: 2px;
 }
 
-#poetry-layout {
-    display: flex;
-    justify-content: center; /* Center the entire layout */
-    width: 95%;
-    /* Retaining large max-width (1400px) */
-    max-width: 1400px; 
-    margin: 20px auto;
-}
-
-.center-content {
-    flex-shrink: 0; /* Prevents the center from shrinking */
-    width: 800px; /* Width of the fridge max-width */
-    margin: 0 20px;
-}
-
+/* --- SIDE POOLS (Used by both top and bottom side pools) --- */
 .side-pool {
-    /* Retaining large dimensions (280px wide, 800px tall) */
     width: 280px; 
     padding: 10px;
-    /*height: 800px;*/ 
-    
-    margin-top: 30px;/*changed from 50 to 30*/
-    /*overflow-y: auto; /* Allows scrolling */*/
-    border-left: 0px dashed #ccc;
-    border-right: 0px dashed #ccc;
+    /* Height and scrolling are managed by content, not fixed height */
 }
 
-.main-pool {
-    /* Styles for the pool below the fridge */
+/* Specific centering for the logo image */
+#main-logo {
+    display: block; 
+    max-width: 350px; /* Example fixed size */
+    height: auto; 
+    margin: 0 auto; 
+}
+
+/* --- MAIN POOL (Below the Fridge) --- */
+#word-pool-bottom {
     width: 100%;
     max-width: 800px;
-    margin: 10px auto; /*changed from 20 to 10*/
-    border-top: 0px dashed #999;
+    margin-top: 10px; /* Reduced gap between button and pool */
     padding-top: 15px;
     text-align: left;
-    /*height: 550px; /* Give it a fixed height */*/
-    /*overflow-y: auto;*/
 }
 
-/* Update: Style the button */
+/* --- REFRESH BUTTON (Moved) --- */
 #refresh-button {
-    margin: 15px auto 10px;
+    /* Updated margin to place it below the fridge */
+    margin: 15px auto 10px; 
     padding: 8px 15px;
     background-color: #fff;
     color: black;
@@ -92,11 +99,4 @@ body {
 
 #refresh-button:hover {
     background-color: #e4fcd9;
-}
-
-#main-logo {
-    display: block; 
-    max-width: 35%; 
-    height: auto; 
-    margin: 0px auto 10px; 
 }
