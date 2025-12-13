@@ -9,23 +9,28 @@
 <body>
 
     <div id="poetry-layout">
-
-        <div id="word-pool-left" class="side-pool"></div>
-
-        <div class="center-content">
-            <img id="main-logo" src="Borderline_logo.png" alt="Borderline Poetry Logo">
+        
+        <div id="top-layout">
+            <div id="word-pool-left-top" class="side-pool"></div>
             
-            <button id="refresh-button">Clear Poem & Shuffle Words</button>
+            <div id="logo-container" class="center-content">
+                <img id="main-logo" src="Borderline_logo.png" alt="Borderline Poetry Logo">
+            </div>
+            
+            <div id="word-pool-right-top" class="side-pool"></div>
+        </div>
 
+        <div id="center-column">
+            
             <div id="refrigerator-area">
                 <p class="poem-prompt">Drag words here to begin your poem...</p>
             </div>
+            
+            <button id="refresh-button">Clear Poem & Shuffle Words</button>
 
             <div id="word-pool-bottom" class="main-pool"></div>
         </div>
-
-        <div id="word-pool-right" class="side-pool"></div>
-
+        
     </div>
     
     <script src="script.js"></script>
