@@ -1,11 +1,13 @@
 const fridge = document.getElementById('refrigerator-area');
 const poolBottom = document.getElementById('word-pool-bottom');
-// NEW POOLS:
-const poolTopLeft = document.getElementById('word-pool-left-top');
-const poolTopRight = document.getElementById('word-pool-right-top');
+const poolLeft = document.getElementById('word-pool-left');
+const poolRight = document.getElementById('word-pool-right');
+// NEW SMALL POOLS:
+const poolLogoLeft = document.getElementById('word-pool-logo-left');
+const poolLogoRight = document.getElementById('word-pool-logo-right');
 
-// Filter the array to get ALL word pools
-const allPools = [poolBottom, poolTopLeft, poolTopRight].filter(pool => pool !== null); 
+// Collect ALL five word pools for word distribution
+const allPools = [poolBottom, poolLeft, poolRight, poolLogoLeft, poolLogoRight].filter(pool => pool !== null); 
 const refreshButton = document.getElementById('refresh-button');
 const ROW_HEIGHT = 35; 
 let draggedElement = null;
