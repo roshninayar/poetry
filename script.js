@@ -54,7 +54,7 @@ async function loadWordsAndCreateTiles() {
     }
 }
 
-// --- MODIFIED FUNCTION: Creates Tiles (Handles Conditional Distribution) ---
+// --- MODIFIED FUNCTION: Creates Tiles (ENSURES ALL WORDS GO TO BOTTOM POOL ON MOBILE) ---
 function createTiles(wordsArray) {
     if (allPools.length === 0) {
         console.error("No word pool containers found. Check index.html IDs.");
@@ -73,7 +73,7 @@ function createTiles(wordsArray) {
         
         // Conditional Distribution:
         if (isTouchDevice) {
-            // MOBILE: ALL words go to the bottom pool
+            // MOBILE: ALL words go ONLY to the bottom pool
             poolBottom.appendChild(tile);
         } else {
             // DESKTOP: Distribute words across all three pools
@@ -82,11 +82,12 @@ function createTiles(wordsArray) {
     });
 }
 
-// --- MODIFIED FUNCTION: Clear and Shuffle (Handles Conditional Distribution) ---
+// --- MODIFIED FUNCTION: Clear and Shuffle (ENSURES ALL WORDS GO TO BOTTOM POOL ON MOBILE) ---
 function clearAndShuffle() {
     const allTiles = document.querySelectorAll('.word-tile');
     
     allTiles.forEach(tile => {
+        // Reset tile positioning/scaling regardless of which pool it will end up in
         tile.style.position = '';
         tile.style.left = '';
         tile.style.top = '';
@@ -108,7 +109,7 @@ function clearAndShuffle() {
         
         shuffledWords.forEach((tile, index) => {
             if (isTouchDevice) {
-                // MOBILE: ALL words go to the bottom pool
+                // MOBILE: ALL words go ONLY to the bottom pool
                 poolBottom.appendChild(tile);
             } else {
                 // DESKTOP: Redistribute across all three pools
@@ -124,7 +125,7 @@ if (refreshButton) {
 
 // -----------------------------------------------------------------------
 // --- HELPER FUNCTIONS FOR MOBILE LOGIC (RANDOM PLACEMENT) ---
-// (REMAINS UNCHANGED)
+// (UNCHANGED)
 // -----------------------------------------------------------------------
 
 function getRandomFridgePosition(tile) {
@@ -164,8 +165,7 @@ function applyPoolStyles(tile) {
 }
 
 // -----------------------------------------------------------------------
-// --- DESKTOP MOUSE DRAG/DROP LISTENERS (UNTOUCHED) ---
-// (REMAINS UNCHANGED)
+// --- DESKTOP MOUSE DRAG/DROP LISTENERS (UNCHANGED) ---
 // -----------------------------------------------------------------------
 
 // DRAGSTART (Desktop)
@@ -213,7 +213,7 @@ allPools.forEach(pool => {
 
 // -----------------------------------------------------------------------
 // --- MOBILE TOUCH LISTENERS (GUARDED to run ONLY on touch devices) ---
-// (REMAINS UNCHANGED)
+// (UNCHANGED)
 // -----------------------------------------------------------------------
 
 if ('ontouchstart' in window || navigator.maxTouchPoints) {
